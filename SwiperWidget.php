@@ -10,13 +10,10 @@ use yii\web\JsExpression;
 class SwiperWidget extends Widget
 {
     /**
-     * 层的样式
-     * @var string
+     * 层的属性
+     * @var array
      */
-    public $wrapStyle = [
-        'width' => '100%',
-        'min-height' => '200px'
-    ];
+    public $wrapOptions = [];
     /**
      * 图片是否显示最大宽度
      * @var bool
@@ -46,7 +43,7 @@ class SwiperWidget extends Widget
      * array：配置参数 @link http://idangero.us/swiper/api/#pagination
      * @var bool|array
      */
-    public $pagination = true;
+    public $pagination = false;
     /**
      * 左右导航
      * false：不显示
@@ -140,12 +137,10 @@ class SwiperWidget extends Widget
             $containerContent[] = Html::tag('div', '', ['id' => $this->_scrollbarId, 'class' => 'swiper-scrollbar']);
         }
 
-        $options = [
+        Html::addCssClass($this->wrapOptions, 'swiper-container');
+        $html = Html::tag('div', implode("\n", $containerContent), array_merge($this->wrapOptions, [
             'id' => $this->_wrapContainerId,
-            'class' => 'swiper-container',
-        ];
-        Html::addCssStyle($options, $this->wrapStyle);
-        $html = Html::tag('div', implode("\n", $containerContent), $options);
+        ]));
         echo $html;
 
         $this->registerAssets();
