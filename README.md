@@ -6,13 +6,13 @@ Yii2 Swiper Widget
 
 - 同一个界面可以存在多个轮播，且不冲突
 
-- [swiper 4.0 +](http://idangero.us/swiper/)
+- [swiper 4.0 +](https://swiperjs.com/swiper-api)
 
 安装
 ------------
 
 ```
-php composer.phar require --prefer-dist kriss/yii2-swiper-widget "*" -vvv
+composer require kriss/yii2-swiper-widget
 ```
 
 ```
@@ -39,6 +39,9 @@ echo \kriss\swiper\SwiperWidget::widget([
     'clientOptions' => [
         'speed' => 200,
         'loop' => true,
+        'on' => [
+            'init' => new \yii\web\JsExpression('function() {}')
+        ],
     ]
 ]);
 ```
@@ -78,4 +81,48 @@ $js = <<<JS
  });
 JS;
 $this->registerJs($js);
+```
+
+单页面宣传海报，带动画
+-----
+使用 AnimatedSwiperSlideWidget
+
+```php
+echo SwiperWidget::widget([
+    'slides' => [
+        AnimatedSwiperSlideWidget::widget([
+            'imageBaseUrl' => '@public/images/post',
+            'bgUrl' => 'bg.jpg',
+            'itemSizeUnit' => 'rem',
+            'items' => [
+                ['bonus_01.png', [6.4, .87, 0, .3], ['zoomIn', 1.5, 0]],
+                ['bonus_02.jpg', [6.4, .55, 1.5, 0], ['fadeIn', 0.5, 1.5]],
+                ['001.png', [6.4, 3.75, 2.8, 0], ['rotateInDownLeft', 0.5, 2]],
+                ['002.png', [6.4, 3.75, 2.8, 0], ['bounceInDown', 1.5, 2.5]],
+                ['003.png', [6.4, 2.25, 6.4, 0], ['fadeInUp', 0.5, 4]],
+            ],
+        ]),
+        AnimatedSwiperSlideWidget::widget([
+            'imageBaseUrl' => '@public/images/post',
+            'bgUrl' => 'bg.jpg',
+            'itemSizeUnit' => 'rem',
+            'items' => [
+                ['bonus_01.png', [6.4, .87, 0, .3], ['zoomIn', 1.5, 0]],
+                ['bonus_02.jpg', [6.4, .55, 1.5, 0], ['fadeIn', 0.5, 1.5]],
+                ['001.png', [6.4, 3.75, 2.8, 0], ['rotateInDownLeft', 0.5, 2]],
+                ['002.png', [6.4, 3.75, 2.8, 0], ['bounceInDown', 1.5, 2.5]],
+                ['003.png', [6.4, 2.25, 6.4, 0], ['fadeInUp', 0.5, 4]],
+            ],
+        ]),
+    ],
+    'pagination' => false,
+    'navigation' => false,
+    'clientOptions' => [
+        'direction' => 'vertical',
+        'on' => [
+            'init' => new JsExpression('function() {swiperAnimateCache(this);swiperAnimate(this);}'),
+            'slideChangeTransitionEnd' => new JsExpression('function() {swiperAnimate(this);}'),
+        ],
+    ],
+]);
 ```

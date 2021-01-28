@@ -5,6 +5,7 @@ namespace kriss\swiper;
 use yii\base\InvalidValueException;
 use yii\base\Widget;
 use yii\helpers\Html;
+use yii\helpers\Json;
 use yii\web\JsExpression;
 
 class SwiperWidget extends Widget
@@ -21,7 +22,13 @@ class SwiperWidget extends Widget
     public $slideImageFullWidth = true;
     /**
      * swiper js params
-     * @link http://idangero.us/swiper/api/
+     * [
+     *     'speed' => 400,
+     *     'on' => [
+     *         'init' => new JsExpression('function() {}')
+     *     ],
+     * ]
+     * @link https://swiperjs.com/swiper-api
      * @var array
      */
     public $clientOptions = [];
@@ -33,6 +40,7 @@ class SwiperWidget extends Widget
      *      Html::img('http://img.zcool.cn/community/01665258173c34a84a0d304fc68fdf.jpg'),
      *      Html::img('http://img.zcool.cn/community/01665258173c34a84a0d304fc68fdf.jpg'),
      * ]
+     * 可以使用 AnimatedSwiperSlideWidget 作为值
      * @var array
      */
     public $slides = [];
@@ -40,7 +48,7 @@ class SwiperWidget extends Widget
      * 分页器
      * false：不显示
      * true：使用默认值显示
-     * array：配置参数 @link http://idangero.us/swiper/api/#pagination
+     * array：配置参数 @link https://swiperjs.com/swiper-api#pagination
      * @var bool|array
      */
     public $pagination = false;
@@ -48,7 +56,7 @@ class SwiperWidget extends Widget
      * 左右导航
      * false：不显示
      * true：使用默认值显示
-     * array：配置参数 @link http://idangero.us/swiper/api/#navigation
+     * array：配置参数 @link https://swiperjs.com/swiper-api#navigation
      * @var bool|array
      */
     public $navigation = false;
@@ -56,7 +64,7 @@ class SwiperWidget extends Widget
      * 底部 scroll 导航
      * false：不显示
      * true：使用默认值显示
-     * array：配置参数 @link http://idangero.us/swiper/api/#scrollbar
+     * array：配置参数 @link https://swiperjs.com/swiper-api#scrollbar
      * @var bool|array
      */
     public $scrollbar = false;
@@ -119,8 +127,8 @@ class SwiperWidget extends Widget
         $containerContent = [];
 
         $slideContent = [];
-        foreach ($this->slides as $slide) {
-            $slideContent[] = Html::tag('div', $slide, ['class' => 'swiper-slide']);
+        foreach ($this->slides as $index => $slide) {
+            $slideContent[] = Html::tag('div', $slide, ['class' => 'swiper-slide slide-' . $index]);
         }
         $containerContent[] = Html::tag('div', implode("\n", $slideContent), ['class' => 'swiper-wrapper']);
 
@@ -141,9 +149,10 @@ class SwiperWidget extends Widget
         $html = Html::tag('div', implode("\n", $containerContent), array_merge($this->wrapOptions, [
             'id' => $this->_wrapContainerId,
         ]));
-        echo $html;
 
         $this->registerAssets();
+
+        return $html;
     }
 
     /**
@@ -162,7 +171,7 @@ CSS;
             $this->view->registerCss($css);
         }
 
-        $clientOptions = json_encode($this->clientOptions);
+        $clientOptions = Json::encode($this->clientOptions);
         $js = new JsExpression("var {$this->swiperEl} = new Swiper('#{$this->_wrapContainerId}', {$clientOptions})");
         $this->view->registerJs($js);
     }
